@@ -3,3 +3,5 @@ incremental_db/
 db/
 src/*.hex
 *.qws
+src/rtl.files
+tmp/
