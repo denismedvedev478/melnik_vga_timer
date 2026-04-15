@@ -14,7 +14,6 @@ module vga(
 //video timing parameter definition
 
 //1024x768 65Mhz
-`ifdef  VIDEO_1024_768
 parameter H_ACTIVE = 16'd1024;        //horizontal active time (pixels)
 parameter H_FP = 16'd24;              //horizontal front porch (pixels)
 parameter H_SYNC = 16'd136;           //horizontal sync time(pixels)
@@ -25,7 +24,6 @@ parameter V_SYNC  = 16'd6;            //vertical sync time (lines)
 parameter V_BP  = 16'd29;             //vertical back porch (lines)
 parameter HS_POL = 1'b0;              //horizontal sync polarity, 1 : POSITIVE,0 : NEGATIVE;
 parameter VS_POL = 1'b0;              //vertical sync polarity, 1 : POSITIVE,0 : NEGATIVE;
-`endif
 
 parameter H_TOTAL = H_ACTIVE + H_FP + H_SYNC + H_BP;//horizontal total time (pixels)
 parameter V_TOTAL = V_ACTIVE + V_FP + V_SYNC + V_BP;//vertical total time (lines)

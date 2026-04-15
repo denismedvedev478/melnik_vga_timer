@@ -58,7 +58,7 @@ module timer (
                     if (cnt_sec == 0 && cnt_min == 0) begin
                         timeout <= 1'b1;  // время вышло
                     end else begin
-                        cnt_ms <= 9'd999;
+                        cnt_ms <= 10'd999;
                         if (cnt_sec == 0) begin
                             cnt_sec <= 8'd59;
                             if (cnt_min > 0) cnt_min <= cnt_min - 1;
