@@ -1,0 +1,39 @@
+module hex_to_7seg (
+    input  logic [31:0] hex_in,
+    output logic [7:0]  seg_data_0,
+    output logic [7:0]  seg_data_1,
+    output logic [7:0]  seg_data_2,
+    output logic [7:0]  seg_data_3,
+    output logic [7:0]  seg_data_4,
+    output logic [7:0]  seg_data_5,
+    output logic [7:0]  seg_data_6,
+    output logic [7:0]  seg_data_7
+);
+
+logic [6:0] seg [0:7];
+
+generate
+    genvar i;
+    for (i = 0; i<8 ; i++) begin : genblk_seg
+        seg_decoder seg_inst (
+            .bin_data ( hex_in[4*i+3:4*i] ), 
+            .seg_data ( seg[i]             )
+        );
+    end
+endgenerate
+
+
+/*
+ * MSB = decimal point
+ * Здесь точка всегда выключена
+ */
+assign seg_data_0 = {1'b1, seg[0]};
+assign seg_data_1 = {1'b1, seg[1]};
+assign seg_data_2 = {1'b1, seg[2]};
+assign seg_data_3 = {1'b1, seg[3]};
+assign seg_data_4 = {1'b1, seg[4]};
+assign seg_data_5 = {1'b1, seg[5]};
+assign seg_data_6 = {1'b1, seg[6]};
+assign seg_data_7 = {1'b1, seg[7]};
+
+endmodule

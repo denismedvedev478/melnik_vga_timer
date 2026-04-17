@@ -16,7 +16,7 @@ module debouncer #(
 
     // синхронизация
     always_ff @(posedge clk or posedge rst) begin
-        if (rst) btn_sync <= 1'b0;
+        if (rst) btn_sync <= 1'b1;
         else     btn_sync <= btn_raw;
     end
 
@@ -24,7 +24,7 @@ module debouncer #(
     always_ff @(posedge clk or posedge rst) begin
         if (rst) begin
             cnt <= 0;
-            btn_clean <= 1'b0;
+            btn_clean <= 1'b1;
         end else begin
             if (btn_sync == btn_clean)
                 cnt <= 0;
@@ -39,11 +39,11 @@ module debouncer #(
     // детектор фронта
     always_ff @(posedge clk or posedge rst) begin
         if (rst) begin
-            btn_prev <= 1'b0;
-            btn_edge <= 1'b0;
+            btn_prev <= 1'b1;
+            btn_edge <= 1'b1;
         end else begin
             btn_prev <= btn_clean;
-            btn_edge <= btn_clean & ~btn_prev;
+            btn_edge <= ~btn_clean & btn_prev;
         end
     end
 endmodule

@@ -36,7 +36,7 @@ clk_div #(
     .DIVIDER(20000) // 20MHz/20_000=1KHz
 ) clk_div_inst (
     .clk(clk),
-	.rst(~rst_n),
+	.rst(rstp),
     .clk_div(clk_1khz)
 );
 
@@ -46,7 +46,7 @@ debouncer #(
     .CLK_FREQ_HZ(20_000_000)
 )debouncer_key1_inst(
     .clk(clk),
-	.rst(~rst_n),
+	.rst(rstp),
     .btn_raw(key1),
     .btn_edge(key1_edge)
 );
@@ -55,7 +55,7 @@ debouncer #(
     .CLK_FREQ_HZ(20_000_000)
 )debouncer_key2_inst(
     .clk(clk),
-	.rst(~rst_n),
+	.rst(rstp),
     .btn_raw(key2),
     .btn_edge(key2_edge)
 );
@@ -64,23 +64,23 @@ debouncer #(
     .CLK_FREQ_HZ(20_000_000)
 )debouncer_key3_inst(
     .clk(clk),
-	.rst(~rst_n),
+	.rst(rstp),
     .btn_raw(key3),
     .btn_edge(key3_edge)
 );
 
 logic[7:0] minutes;
 logic[7:0] seconds;
-logic[7:0] milliseconds;
+logic[9:0] milliseconds;
 logic      timeout;
 timer timer_inst(
     .clk(clk),
-	.rst(~rst_n),
+	.rst(rstp),
     
-    .tick_1ms   (clk_1khz),
-    .key1_edge  (key1_edge),
-    .key2_edge  (key2_edge),
-    .key3_edge  (key3_edge),
+    .tick_1ms     (clk_1khz),
+    .key1_set_min (key1_edge),
+    .key2_set_sec (key2_edge),
+    .key3_set_mode(key3_edge),
 
     .minutes_out     (minutes),
     .seconds_out     (seconds),
@@ -90,7 +90,7 @@ timer timer_inst(
 
 vga vga_inst(
 	.clk(video_clk),
-	.rst(~rst_n),
+	.rst(rstp),
     .minutes     (minutes),
     .seconds     (seconds),
     .milliseconds(milliseconds),
