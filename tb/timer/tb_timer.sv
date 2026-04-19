@@ -86,18 +86,21 @@ always_ff @(posedge clk or negedge aresetn) begin
 end
 
 
-timer timer_inst(
+timer#(
+    .OVERRIDE_TICK_1ms(1),
+    .CLK_FREQ_HZ(20_000_000)
+) timer_inst(
     .clk(clk),
     .rst(~aresetn),
-    .t1ms_override(1),
     .t1ms_ext(tick_1ms),
-    .key1_min (key1_set_min),
-    .key2_sec (key2_set_sec),
-    .key3_mode(key3_set_mode),
+    .key1_min (key1_edge),
+    .key2_sec (key2_edge),
+    .key3_mode(key3_edge),
     .min_o  (minutes),
     .sec_o  (seconds),
     .ms_o   (milliseconds),
-    .timeout(timeout)
+    .timeout(timeout),
+    .state_o(led[0])
 );
 
 endmodule

@@ -1,9 +1,9 @@
 module timer#(
+    parameter OVERRIDE_TICK_1ms = 0, // 1 for oferriding
     parameter CLK_FREQ_HZ=20_000_000
 ) (
     input  logic        clk,
     input  logic        rst,
-    input  logic        t1ms_override,
     input  logic        t1ms_ext,
 
     input  logic        key1_min,   //KEY_JUST_PRESSED STATE
@@ -32,7 +32,10 @@ module timer#(
             end
         end
     end
-    assign tick_1ms = t1ms_override ? t1ms_ext : tick_1ms_int;
+    generate
+        assign tick_1ms = OVERRIDE_TICK_1ms ? t1ms_ext : tick_1ms_int;
+    endgenerate
+
 
     typedef enum logic { SET, COUNTDOWN } state_t;
     state_t state, next_state;
@@ -88,16 +91,21 @@ module timer#(
     assign timer_min = (timer / 21'd1000) / 21'd60;
     assign timer_sec = (timer / 21'd1000);
     assign timer_ms  = (timer % 21'd1000);
-    always_comb begin : TIME_FOR_DISPLAY_OUTPUT_MUXING
-        if (state==SET) begin
-            min_o = set_min;
-            sec_o = set_sec;
-            ms_o  = '0;
+    always_ff @(posedge clk or posedge rst) begin : TIME_FOR_DISPLAY_OUTPUT_MUXING
+        if (rst) begin
+            min_o <= '0;
+            sec_o <= '0;
+            ms_o  <= '0;
+        end
+        else if (state==SET) begin
+            min_o <= set_min;
+            sec_o <= set_sec;
+            ms_o  <= '0;
         end
         else begin
-            min_o = timer_min;
-            sec_o = timer_sec;
-            ms_o  = timer_ms;
+            min_o <= timer_min;
+            sec_o <= timer_sec;
+            ms_o  <= timer_ms;
         end
     end
 endmodule
