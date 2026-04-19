@@ -41,10 +41,12 @@ logic[5:0] minutes;
 logic[5:0] seconds;
 logic[9:0] milliseconds;
 assign led[3:1] = {key3, key2, key1};
-timer timer_inst(
+timer#(
+    .OVERRIDE_TICK_1ms(0),
+    .CLK_FREQ_HZ(20_000_000)
+) timer_inst(
     .clk(clk),
     .rst(rstp),
-    .t1ms_override(0),
     .t1ms_ext(tick_1ms),
     .key1_min (key1_edge),
     .key2_sec (key2_edge),
