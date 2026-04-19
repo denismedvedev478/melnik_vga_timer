@@ -51,7 +51,7 @@ begin
 		4'hd:seg_data = 7'b010_0001;
 		4'he:seg_data = 7'b000_0110;
 		4'hf:seg_data = 7'b000_1110;
-		default:seg_data = 7'b111_1111;
+		default:seg_data = 7'b000_1001; //X
 	endcase
 end
 endmodule

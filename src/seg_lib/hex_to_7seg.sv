@@ -1,5 +1,5 @@
 module hex_to_7seg (
-    input  logic [31:0] hex_in,
+    input  logic [31:0] hex_cnt,
     output logic [7:0]  seg_data_0,
     output logic [7:0]  seg_data_1,
     output logic [7:0]  seg_data_2,
@@ -16,7 +16,7 @@ generate
     genvar i;
     for (i = 0; i<8 ; i++) begin : genblk_seg
         seg_decoder seg_inst (
-            .bin_data ( hex_in[4*i+3:4*i] ), 
+            .bin_data ( hex_cnt[4*i+3:4*i] ), 
             .seg_data ( seg[i]             )
         );
     end

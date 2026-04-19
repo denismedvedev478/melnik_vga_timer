@@ -93,32 +93,32 @@ begin
 			4'd2:
 			begin
 				seg_sel <= 8'b1111_1011;
-				seg_data <= 8'hff;
+				seg_data <= seg_data_2;
 			end
 			4'd3:
 			begin
 				seg_sel <= 8'b1111_0111;
-				seg_data <= 8'hff;
+				seg_data <= seg_data_3;
 			end
 			4'd4:
 			begin
 				seg_sel <= 8'b1110_1111;
-				seg_data <= 8'hff;
+				seg_data <= seg_data_4;
 			end
 			4'd5:
 			begin
 				seg_sel <= 8'b1101_1111;
-				seg_data <= 8'hff;
+				seg_data <= seg_data_5;
 			end
 				4'd6:
 			begin
 				seg_sel <= 8'b1011_1111;
-				seg_data <= 8'hff;
+				seg_data <= seg_data_6;
 			end
 				4'd7:
 			begin
 				seg_sel <= 8'b0111_1111;
-				seg_data <= 8'hff;
+				seg_data <= seg_data_7;
 			end
 			default:
 			begin
