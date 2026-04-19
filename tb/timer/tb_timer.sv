@@ -93,14 +93,13 @@ timer#(
     .clk(clk),
     .rst(~aresetn),
     .t1ms_ext(tick_1ms),
-    .key1_min (key1_edge),
-    .key2_sec (key2_edge),
-    .key3_mode(key3_edge),
+    .key1_min (key1_set_min),
+    .key2_sec (key2_set_sec),
+    .key3_mode(key3_set_mode),
     .min_o  (minutes),
     .sec_o  (seconds),
     .ms_o   (milliseconds),
-    .timeout(timeout),
-    .state_o(led[0])
+    .timeout(timeout)
 );
 
 endmodule
