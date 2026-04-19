@@ -75,7 +75,16 @@ initial begin
     @(posedge clk);
     key2 = 1;
 
-    #100;
+    #1000;
+    @(posedge clk);
+    key2 = 0;
+    @(posedge clk);
+    key2 = 1;
+    @(posedge clk);
+    key2 = 0;
+    #1000;
+    key2 = 0;
+    #1000;
     $finish;
 end
 
