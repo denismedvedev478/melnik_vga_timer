@@ -64,8 +64,12 @@ module timer#(
             set_min <= '0;
             set_sec <= '0;
         end
-        else if (state==SET && key1_min) set_min <= set_min+1;
-        else if (state==SET && key2_sec) set_sec <= set_sec+1;
+        else if (state==SET && key1_min) set_min <= (set_min+1)%6'd60;
+        else if (state==SET && key2_sec) set_sec <= (set_sec+1)%6'd60;
+        else if (next_state == COUNTDOWN && state == SET) begin
+            set_min   <= '0;
+            set_sec   <= '0;
+        end
     end
 
     logic [5:0]  count_min;
