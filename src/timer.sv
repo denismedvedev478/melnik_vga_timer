@@ -68,29 +68,55 @@ module timer#(
         else if (state==SET && key2_sec) set_sec <= set_sec+1;
     end
 
-    logic[21:0] timer;
+    logic [5:0]  count_min;
+    logic [5:0]  count_sec;
+    logic [9:0]  count_ms;
+
     always_ff @(posedge clk or posedge rst) begin : COUNTDOWN_TIMER_LOGIC
         if (rst) begin
-            timer <= '0;
+            count_min <= '0;
+            count_sec <= '0;
+            count_ms  <= '0;
         end
-        else if (next_state==COUNTDOWN && state==SET)
-            timer <= (set_min*60+set_sec)*1000;
-        else if (state==COUNTDOWN && tick_1ms)
-            timer <= timer-1;
+        // Загрузка нового значения при переходе из SET в COUNTDOWN
+        else if (next_state == COUNTDOWN && state == SET) begin
+            count_min <= set_min;
+            count_sec <= set_sec;
+            count_ms  <= 10'd0;
+        end
+        // Логика обратного отсчёта
+        else if (state == COUNTDOWN && tick_1ms) begin
+            if (count_ms == 10'd0) begin
+                if (count_sec == 6'd0 && count_min == 6'd0) begin
+                    // Таймер достиг нуля, ничего не делаем, пусть timeout сработает
+                    count_min <= count_min;
+                    count_sec <= count_sec;
+                    count_ms  <= count_ms;
+                end else begin
+                    count_ms <= 10'd999; // Устанавливаем в 999
+                    if (count_sec == 6'd0) begin
+                        count_sec <= 6'd59;
+                        if (count_min > 6'd0)
+                            count_min <= count_min - 1;
+                    end else begin
+                        count_sec <= count_sec - 1;
+                    end
+                end
+            end else begin
+                count_ms <= count_ms - 1;
+            end
+        end
     end
 
     always_ff @(posedge clk or posedge rst) begin : TIMEOUT_LOGIC
         if (rst)
-            timeout <= '0;
-        else if (state==COUNTDOWN && timer=='0)
-            timeout <= 1;
+            timeout <= 1'b0;
+        else if (state == COUNTDOWN && count_ms == 10'd0 && count_sec == 6'd0 && count_min == 6'd0)
+            timeout <= 1'b1;
+        else
+            timeout <= 1'b0;
     end
 
-
-    logic[5:0] timer_min, timer_sec; logic[9:0] timer_ms;
-    assign timer_min = (timer / 21'd1000) / 21'd60;
-    assign timer_sec = (timer / 21'd1000);
-    assign timer_ms  = (timer % 21'd1000);
     always_ff @(posedge clk or posedge rst) begin : TIME_FOR_DISPLAY_OUTPUT_MUXING
         if (rst) begin
             min_o <= '0;
@@ -103,9 +129,9 @@ module timer#(
             ms_o  <= '0;
         end
         else begin
-            min_o <= timer_min;
-            sec_o <= timer_sec;
-            ms_o  <= timer_ms;
+            min_o <= count_min;
+            sec_o <= count_sec;
+            ms_o  <= count_ms;
         end
     end
 endmodule
