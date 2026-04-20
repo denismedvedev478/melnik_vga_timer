@@ -1,9 +1,9 @@
 module vga(
 	input                 clk,           //pixel clock
 	input                 rstp,           //reset signal high active
-    output logic [3:0]    min_tens, min_ones,
-    output logic [3:0]    sec_tens, sec_ones,
-    output logic [3:0]    ms_hund, ms_tens, ms_ones,
+    input  logic [3:0]    min_tens, min_ones,
+    input  logic [3:0]    sec_tens, sec_ones,
+    input  logic [3:0]    ms_hund, ms_tens, ms_ones,
 	output                hs,            //horizontal synchronization
 	output                vs,            //vertical synchronization
 	output                de,            //video valid
