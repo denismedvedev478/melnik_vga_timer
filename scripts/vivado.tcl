@@ -8,7 +8,7 @@ set PRJNAME "melnik_vga_timer"
 file mkdir $TMPDIR
 cd $TMPDIR
 
-create_project $PRJNAME -force -part xc7a35ticsg324-1L
+create_project $PRJNAME -force -part xc7a100ticsg324-1L
 add_files -fileset sources_1 -norecurse ${RTLDIR}
 add_files -fileset sources_1 -norecurse ${RTLDIR}/seg_lib
 
