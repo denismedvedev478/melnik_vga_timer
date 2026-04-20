@@ -48,23 +48,20 @@ module time2vga (
 
     // ---------- выбор ID символа (0..11) ----------
     logic [3:0] symbol_id;
-    always_ff @(posedge clk or posedge rstp) begin
-        if (rstp)
-            symbol_id <= '0;
-        else
-            case (symbol_index)
-                0: symbol_id = min_tens;
-                1: symbol_id = min_ones;
-                2: symbol_id = 10;      // ':'
-                3: symbol_id = sec_tens;
-                4: symbol_id = sec_ones;
-                5: symbol_id = 11;      // '.'
-                6: symbol_id = ms_hund;
-                7: symbol_id = ms_tens;
-                8: symbol_id = ms_ones;
-                default: symbol_id = 0;
-            endcase
-    end
+    always_comb begin
+    case (symbol_index)
+        0: symbol_id = min_tens;
+        1: symbol_id = min_ones;
+        2: symbol_id = 10;
+        3: symbol_id = sec_tens;
+        4: symbol_id = sec_ones;
+        5: symbol_id = 11;
+        6: symbol_id = ms_hund;
+        7: symbol_id = ms_tens;
+        8: symbol_id = ms_ones;
+        default: symbol_id = 0;
+    endcase
+end
 
     // ---------- адрес строки в ROM ----------
     logic [ADDR_W-1:0] rom_addr;
@@ -82,7 +79,7 @@ module time2vga (
         .rst_n(~rstp),
         .char(symbol_id),
         .y_offset(local_y),
-        .fetch(1),
+        .fetch(in_rect),
         .line(line_data)
     );
 
