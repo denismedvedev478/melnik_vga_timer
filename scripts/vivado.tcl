@@ -10,6 +10,7 @@ cd $TMPDIR
 
 create_project $PRJNAME -force -part xc7a35ticsg324-1L
 add_files -fileset sources_1 -norecurse ${RTLDIR}
+add_files -fileset sources_1 -norecurse ${RTLDIR}/seg_lib
 
 add_files -fileset constrs_1 -norecurse ${XDCDIR}
 
