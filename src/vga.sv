@@ -13,17 +13,17 @@ module vga(
 );
 //video timing parameter definition
 
-//800x480 33Mhz
+//800x600 40Mhz
 parameter H_ACTIVE = 16'd800; 	//horizontal active time (pixels)
 parameter H_FP = 16'd40;      	//horizontal front porch (pixels)
 parameter H_SYNC = 16'd128;   	//horizontal sync time(pixels)
 parameter H_BP = 16'd88;      	//horizontal back porch (pixels)
-parameter V_ACTIVE = 16'd480; 	//vertical active Time (lines)
+parameter V_ACTIVE = 16'd600; 	//vertical active Time (lines)
 parameter V_FP  = 16'd1;     	//vertical front porch (lines)
-parameter V_SYNC  = 16'd3;    	//vertical sync time (lines)
-parameter V_BP  = 16'd21;    	//vertical back porch (lines)
-parameter HS_POL = 1'b0;		//horizontal sync polarity, 1 : POSITIVE,0 : NEGATIVE;
-parameter VS_POL = 1'b0;		//vertical sync polarity, 1 : POSITIVE,0 : NEGATIVE;
+parameter V_SYNC  = 16'd4;    	//vertical sync time (lines)
+parameter V_BP  = 16'd23;    	//vertical back porch (lines)
+parameter HS_POL = 1'b1;		//horizontal sync polarity, 1 : POSITIVE,0 : NEGATIVE;
+parameter VS_POL = 1'b1;		//vertical sync polarity, 1 : POSITIVE,0 : NEGATIVE;
 
 parameter H_TOTAL = H_ACTIVE + H_FP + H_SYNC + H_BP;//horizontal total time (pixels)
 parameter V_TOTAL = V_ACTIVE + V_FP + V_SYNC + V_BP;//vertical total time (lines)
@@ -125,12 +125,12 @@ end
 
 always_ff @(posedge clk or posedge rstp)
 begin
-    if(rstp == 1'b1)
+    if (rstp)
         active_y <= 12'd0;
-    else if(v_active && (h_cnt == H_FP-1)) // момент начала активной строки по горизонтали
-        active_y <= v_cnt - (V_FP + V_SYNC + V_BP - 1);
-    else
-        active_y <= active_y;
+    else if (h_cnt == H_FP - 1) begin
+        if (v_cnt >= V_FP + V_SYNC + V_BP - 1)
+            active_y <= v_cnt - (V_FP + V_SYNC + V_BP - 1);
+    end
 end
 
 always_ff @(posedge clk or posedge rstp)
@@ -162,7 +162,7 @@ begin
 	if(rstp == 1'b1)
 		vs_reg <= 1'd0;
 	else if((v_cnt == V_FP - 1) && (h_cnt == H_FP - 1))          //vertical sync begin
-		vs_reg <= HS_POL;
+		vs_reg <= VS_POL;
 	else if((v_cnt == V_FP + V_SYNC - 1) && (h_cnt == H_FP - 1)) //vertical sync end
 		vs_reg <= ~vs_reg;  
 	else
