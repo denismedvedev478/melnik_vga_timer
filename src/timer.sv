@@ -3,7 +3,7 @@ module timer#(
     parameter CLK_FREQ_HZ=20_000_000
 ) (
     input  logic        clk,
-    input  logic        rst,
+    input  logic        rstp,
     input  logic        t1ms_ext,
 
     input  logic        key1_min,   //KEY_JUST_PRESSED STATE
@@ -18,8 +18,8 @@ module timer#(
     logic tick_1ms_int; // (internal) pulse every ms
     localparam CNT_MAX=CLK_FREQ_HZ/1000;
     logic [$clog2(CNT_MAX)-1:0] cnt;
-    always_ff @(posedge clk or posedge rst) begin
-        if (rst) begin
+    always_ff @(posedge clk or posedge rstp) begin
+        if (rstp) begin
             cnt <= 0;
             tick_1ms_int <= 1'b0;
         end else begin
@@ -41,8 +41,8 @@ module timer#(
     state_t state, next_state;
     assign state_o=state;
 
-    always_ff @( posedge clk or posedge rst ) begin : FSM_SET_STATE_LOGIC
-        if (rst) state <= SET;
+    always_ff @( posedge clk or posedge rstp) begin : FSM_SET_STATE_LOGIC
+        if (rstp) state <= SET;
         else state <= next_state;
     end
 
@@ -59,8 +59,8 @@ module timer#(
 
 
     logic[5:0] set_min, set_sec; // 6bit set time (only 0-59 values are valid)
-    always_ff @(posedge clk or posedge rst) begin : SET_TIMER_LOGIC
-        if (rst) begin
+    always_ff @(posedge clk or posedge rstp) begin : SET_TIMER_LOGIC
+        if (rstp) begin
             set_min <= '0;
             set_sec <= '0;
         end
@@ -76,8 +76,8 @@ module timer#(
     logic [5:0]  count_sec;
     logic [9:0]  count_ms;
 
-    always_ff @(posedge clk or posedge rst) begin : COUNTDOWN_TIMER_LOGIC
-        if (rst) begin
+    always_ff @(posedge clk or posedge rstp) begin : COUNTDOWN_TIMER_LOGIC
+        if (rstp) begin
             count_min <= '0;
             count_sec <= '0;
             count_ms  <= '0;
@@ -112,8 +112,8 @@ module timer#(
         end
     end
 
-    always_ff @(posedge clk or posedge rst) begin : TIMEOUT_LOGIC
-        if (rst)
+    always_ff @(posedge clk or posedge rstp) begin : TIMEOUT_LOGIC
+        if (rstp)
             timeout <= 1'b0;
         else if (state == COUNTDOWN && count_ms == 10'd0 && count_sec == 6'd0 && count_min == 6'd0)
             timeout <= 1'b1;
@@ -121,8 +121,8 @@ module timer#(
             timeout <= 1'b0;
     end
 
-    always_ff @(posedge clk or posedge rst) begin : TIME_FOR_DISPLAY_OUTPUT_MUXING
-        if (rst) begin
+    always_ff @(posedge clk or posedge rstp) begin : TIME_FOR_DISPLAY_OUTPUT_MUXING
+        if (rstp) begin
             min_o <= '0;
             sec_o <= '0;
             ms_o  <= '0;
