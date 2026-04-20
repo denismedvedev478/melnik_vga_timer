@@ -1,9 +1,9 @@
 module vga(
 	input                 clk,           //pixel clock
-	input                 rst,           //reset signal high active
-    input[7:0]            minutes,       //input time(in minutes) from external time module
-    input[7:0]            seconds,       //input time(in seconds) from external time module
-    input[9:0]            milliseconds,  //input time(in milliseconds) from external time module
+	input                 rstp,           //reset signal high active
+	input  logic [7:0]    min_dec,
+	input  logic [7:0]    sec_dec,
+	input  logic [9:0]    ms_dec,
 	output                hs,            //horizontal synchronization
 	output                vs,            //vertical synchronization
 	output                de,            //video valid
@@ -74,9 +74,9 @@ assign vs           = vs_reg_d0;
 assign video_active = h_active & v_active;
 assign de           = video_active_d0;
 
-always_ff @(posedge clk or posedge rst)
+always_ff @(posedge clk or posedge rstp)
 begin
-	if(rst == 1'b1)
+	if(rstp == 1'b1)
 		begin
 			hs_reg_d0 <= 1'b0;
 			vs_reg_d0 <= 1'b0;
@@ -90,9 +90,9 @@ begin
 		end
 end
 
-always_ff @(posedge clk or posedge rst)
+always_ff @(posedge clk or posedge rstp)
 begin
-	if(rst == 1'b1)
+	if(rstp == 1'b1)
 		h_cnt <= 12'd0;
 	else if(h_cnt == H_TOTAL-1)//horizontal counter maximum value
 		h_cnt <= 12'd0;
@@ -100,9 +100,9 @@ begin
 		h_cnt <= h_cnt + 12'd1;
 end
 
-always_ff @(posedge clk or posedge rst)
+always_ff @(posedge clk or posedge rstp)
 begin
-	if(rst == 1'b1)
+	if(rstp == 1'b1)
 		active_x <= 12'd0;
 	else if(h_cnt >= H_FP+H_SYNC+H_BP-1)//horizontal video active
 		active_x <= h_cnt - (H_FP[11:0] + H_SYNC[11:0] + H_BP[11:0] - 12'd1);
@@ -110,9 +110,9 @@ begin
 		active_x <= active_x;
 end
 
-always_ff @(posedge clk or posedge rst)
+always_ff @(posedge clk or posedge rstp)
 begin
-	if(rst == 1'b1)
+	if(rstp == 1'b1)
 		v_cnt <= 12'd0;
 	else if(h_cnt == H_FP-1)    //horizontal sync time
 		if(v_cnt == V_TOTAL-1)  //vertical counter maximum value
@@ -123,9 +123,19 @@ begin
 		v_cnt <= v_cnt;
 end
 
-always_ff @(posedge clk or posedge rst)
+always_ff @(posedge clk or posedge rstp)
 begin
-	if(rst == 1'b1)
+    if(rstp == 1'b1)
+        active_y <= 12'd0;
+    else if(v_active && (h_cnt == H_FP-1)) // момент начала активной строки по горизонтали
+        active_y <= v_cnt - (V_FP + V_SYNC + V_BP - 1);
+    else
+        active_y <= active_y;
+end
+
+always_ff @(posedge clk or posedge rstp)
+begin
+	if(rstp == 1'b1)
 		hs_reg <= 1'b0;
 	else if(h_cnt == H_FP - 1)          //horizontal sync begin
 		hs_reg <= HS_POL;
@@ -135,9 +145,9 @@ begin
 		hs_reg <= hs_reg;
 end
 
-always_ff @(posedge clk or posedge rst)
+always_ff @(posedge clk or posedge rstp)
 begin
-	if(rst == 1'b1)
+	if(rstp == 1'b1)
 		h_active <= 1'b0;
 	else if(h_cnt == H_FP + H_SYNC + H_BP - 1)  //horizontal active begin
 		h_active <= 1'b1;
@@ -147,9 +157,9 @@ begin
 		h_active <= h_active;
 end
 
-always_ff @(posedge clk or posedge rst)
+always_ff @(posedge clk or posedge rstp)
 begin
-	if(rst == 1'b1)
+	if(rstp == 1'b1)
 		vs_reg <= 1'd0;
 	else if((v_cnt == V_FP - 1) && (h_cnt == H_FP - 1))          //vertical sync begin
 		vs_reg <= HS_POL;
@@ -159,9 +169,9 @@ begin
 		vs_reg <= vs_reg;
 end
 
-always_ff @(posedge clk or posedge rst)
+always_ff @(posedge clk or posedge rstp)
 begin
-	if(rst == 1'b1)
+	if(rstp == 1'b1)
 		v_active <= 1'd0;
 	else if((v_cnt == V_FP + V_SYNC + V_BP - 1) && (h_cnt == H_FP - 1)) //vertical active begin
 		v_active <= 1'b1;
@@ -173,15 +183,15 @@ end
 
 time2vga time2vga_inst(
     .clk(clk),
-    .rst(rst),
+    .rstp(rstp),
 
     .active_x    (active_x),
     .active_y    (active_y),
     .video_active(video_active),
 
-    .minutes     (minutes     ),
-    .seconds     (seconds     ),
-    .milliseconds(milliseconds),
+    .min_dec(min_dec),
+    .sec_dec(sec_dec),
+    .ms_dec (ms_dec),
 
     .r(rgb_r),
     .g(rgb_g),
