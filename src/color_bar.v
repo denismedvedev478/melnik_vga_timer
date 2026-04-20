@@ -29,7 +29,6 @@
 //2013/5/7                     1.2          remove some warning
 //2017/7/17                    1.3      
 //*******************************************************************************/
-`include "video_define.v"
 module color_bar(
 	input                 clk,           //pixel clock
 	input                 rst,           //reset signal high active
@@ -40,64 +39,7 @@ module color_bar(
 	output[7:0]           rgb_g,         //video green data
 	output[7:0]           rgb_b          //video blue data
 );
-//video timing parameter definition
-`ifdef  VIDEO_1280_720
-parameter H_ACTIVE = 16'd1280;           //horizontal active time (pixels)
-parameter H_FP = 16'd110;                //horizontal front porch (pixels)
-parameter H_SYNC = 16'd40;               //horizontal sync time(pixels)
-parameter H_BP = 16'd220;                //horizontal back porch (pixels)
-parameter V_ACTIVE = 16'd720;            //vertical active Time (lines)
-parameter V_FP  = 16'd5;                 //vertical front porch (lines)
-parameter V_SYNC  = 16'd5;               //vertical sync time (lines)
-parameter V_BP  = 16'd20;                //vertical back porch (lines)
-parameter HS_POL = 1'b1;                 //horizontal sync polarity, 1 : POSITIVE,0 : NEGATIVE;
-parameter VS_POL = 1'b1;                 //vertical sync polarity, 1 : POSITIVE,0 : NEGATIVE;
-`endif
 
-//480x272 9Mhz
-`ifdef  VIDEO_480_272
-parameter H_ACTIVE = 16'd480; 
-parameter H_FP = 16'd2;       
-parameter H_SYNC = 16'd41;    
-parameter H_BP = 16'd2;       
-parameter V_ACTIVE = 16'd272; 
-parameter V_FP  = 16'd2;     
-parameter V_SYNC  = 16'd10;   
-parameter V_BP  = 16'd2;     
-parameter HS_POL = 1'b0;
-parameter VS_POL = 1'b0;
-`endif
-
-//640x480 25.175Mhz
-`ifdef  VIDEO_640_480
-parameter H_ACTIVE = 16'd640; 
-parameter H_FP = 16'd16;      
-parameter H_SYNC = 16'd96;    
-parameter H_BP = 16'd48;      
-parameter V_ACTIVE = 16'd480; 
-parameter V_FP  = 16'd10;    
-parameter V_SYNC  = 16'd2;    
-parameter V_BP  = 16'd33;    
-parameter HS_POL = 1'b0;
-parameter VS_POL = 1'b0;
-`endif
-
-//800x480 33Mhz
-`ifdef  VIDEO_800_480
-parameter H_ACTIVE = 16'd800; 
-parameter H_FP = 16'd40;      
-parameter H_SYNC = 16'd128;   
-parameter H_BP = 16'd88;      
-parameter V_ACTIVE = 16'd480; 
-parameter V_FP  = 16'd1;     
-parameter V_SYNC  = 16'd3;    
-parameter V_BP  = 16'd21;    
-parameter HS_POL = 1'b0;
-parameter VS_POL = 1'b0;
-`endif
-
-//800x600 40Mhz
-`ifdef  VIDEO_800_600
 parameter H_ACTIVE = 16'd800; 
 parameter H_FP = 16'd40;      
 parameter H_SYNC = 16'd128;   
@@ -108,35 +50,7 @@ parameter V_SYNC  = 16'd4;
 parameter V_BP  = 16'd23;    
 parameter HS_POL = 1'b1;
 parameter VS_POL = 1'b1;
-`endif
 
-//1024x768 65Mhz
-`ifdef  VIDEO_1024_768
-parameter H_ACTIVE = 16'd1024;
-parameter H_FP = 16'd24;      
-parameter H_SYNC = 16'd136;   
-parameter H_BP = 16'd160;     
-parameter V_ACTIVE = 16'd768; 
-parameter V_FP  = 16'd3;      
-parameter V_SYNC  = 16'd6;    
-parameter V_BP  = 16'd29;     
-parameter HS_POL = 1'b0;
-parameter VS_POL = 1'b0;
-`endif
-
-//1920x1080 148.5Mhz
-`ifdef  VIDEO_1920_1080
-parameter H_ACTIVE = 16'd1920;
-parameter H_FP = 16'd88;
-parameter H_SYNC = 16'd44;
-parameter H_BP = 16'd148; 
-parameter V_ACTIVE = 16'd1080;
-parameter V_FP  = 16'd4;
-parameter V_SYNC  = 16'd5;
-parameter V_BP  = 16'd36;
-parameter HS_POL = 1'b1;
-parameter VS_POL = 1'b1;
-`endif
 parameter H_TOTAL = H_ACTIVE + H_FP + H_SYNC + H_BP;//horizontal total time (pixels)
 parameter V_TOTAL = V_ACTIVE + V_FP + V_SYNC + V_BP;//vertical total time (lines)
 //define the RGB values for 8 colors

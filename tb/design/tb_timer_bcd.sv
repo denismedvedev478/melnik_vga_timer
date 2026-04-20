@@ -35,6 +35,7 @@ initial begin
     @(READY);
 
     // ---------- SET MODE ----------
+    // установить 1 мин
     repeat (1) begin
         @(posedge clk);
         key1_set_min = 1;
@@ -42,6 +43,7 @@ initial begin
         key1_set_min = 0;
     end
 
+    // установить 5 сек
     repeat (5) begin
         @(posedge clk);
         key2_set_sec = 1;

@@ -11,6 +11,7 @@ module top(
     output[3:0] vga_out_b   //vga blue
 );
 
+parameter CLK_FREQ_HZ = 40_000_000;
 logic      video_clk;
 logic      video_hs;
 logic      video_vs;
@@ -26,41 +27,36 @@ assign vga_out_g  = video_g[7:2]; //discard low bit data
 assign vga_out_b  = video_b[7:3]; //discard low bit data
 
 //generate video pixel clock
-/*video_pll video_pll_inst(
-	.inclk0(clk),
-	.c0(video_clk));*/
-/*clk_wiz_0 video_pll_clk_wiz_0(
-  // Status and control signals
-    .clk_in1 (clk),
-    .reset   (~rst_n),  
-    .clk_out1(video_clk)
-);*/
-assign video_clk = clk;
+clk_wiz_0_main main_video_clock_domain( // Clock in ports
+  .clk_in1(clk),
+  .reset(~rst_n),
+  .clk_out1(video_clk)
+);
 
 logic key1_edge, key2_edge, key3_edge;
 debouncer #(
     .TIMEOUT_MS(20),
-    .CLK_FREQ_HZ(12_500_000)
+    .CLK_FREQ_HZ(CLK_FREQ_HZ)
 )debouncer_key1_inst(
-    .clk(clk),
+    .clk(video_clk),
 	.rstp(~rst_n),
     .btn_raw(key1),
     .btn_edge(key1_edge)
 );
 debouncer #(
     .TIMEOUT_MS(20),
-    .CLK_FREQ_HZ(12_500_000)
+    .CLK_FREQ_HZ(CLK_FREQ_HZ)
 )debouncer_key2_inst(
-    .clk(clk),
+    .clk(video_clk),
 	.rstp(~rst_n),
     .btn_raw(key2),
     .btn_edge(key2_edge)
 );
 debouncer #(
     .TIMEOUT_MS(20),
-    .CLK_FREQ_HZ(12_500_000)
+    .CLK_FREQ_HZ(CLK_FREQ_HZ)
 )debouncer_key3_inst(
-    .clk(clk),
+    .clk(video_clk),
 	.rstp(~rst_n),
     .btn_raw(key3),
     .btn_edge(key3_edge)
@@ -77,9 +73,9 @@ logic [3:0] sec_tens, sec_ones;
 logic [3:0] ms_hund, ms_tens, ms_ones;
 timer_bcd#(
     .OVERRIDE_TICK_1ms(0),
-    .CLK_FREQ_HZ(12_500_000)
+    .CLK_FREQ_HZ(CLK_FREQ_HZ)
 ) timer_bcd_inst(
-    .clk(clk),
+    .clk(video_clk),
     .rstp(~rst_n),
     .t1ms_ext(1),
     .key1_min (key1_edge),
@@ -95,70 +91,21 @@ timer_bcd#(
     .timeout(timeout_bcd)
 );
 
-logic[7:0] min_dec;
-hex2dec #(
-    .HEX_WIDTH(6),
-    .DEC_DIGITS(2)
-) hex2dec_min_inst (
-    .hex_in(min_hex),
-    .dec_out(min_dec)
-);
-logic[7:0] sec_dec;
-hex2dec #(
-    .HEX_WIDTH(6),
-    .DEC_DIGITS(2)
-) hex2dec_sec_inst (
-    .hex_in(sec_hex),
-    .dec_out(sec_dec)
-);
-logic[11:0] ms_dec;
-hex2dec #(
-    .HEX_WIDTH(10),
-    .DEC_DIGITS(3)
-) hex2dec_ms_inst (
-    .hex_in(ms_hex),
-    .dec_out(ms_dec)
-);
+logic timeout_long;
 
-logic[4*(3+2+2)-1:0] dec_timer_seg;
-assign dec_timer_seg = {min_dec, sec_dec, ms_dec};
-logic [7:0] seg_data_0;
-logic [7:0] seg_data_1;
-logic [7:0] seg_data_2;
-logic [7:0] seg_data_3;
-logic [7:0] seg_data_4;
-logic [7:0] seg_data_5;
-logic [7:0] seg_data_6;
-logic [7:0] seg_data_7;
-/*hex_to_7seg u_hex (
-    .hex_cnt(dec_timer_seg),
-    .seg_data_0(seg_data_0),
-    .seg_data_1(seg_data_1),
-    .seg_data_2(seg_data_2),
-    .seg_data_3(seg_data_3),
-    .seg_data_4(seg_data_4),
-    .seg_data_5(seg_data_5),
-    .seg_data_6(seg_data_6),
-    .seg_data_7(seg_data_7)
-);
-seg_scan u_scan (
+pulse_extender #(
+    .CLK_FREQ_HZ(CLK_FREQ_HZ)   // укажите вашу реальную частоту
+) ext_inst (
     .clk(clk),
-    .rst_n(rst_n),
-    .seg_sel(seg_sel),
-    .seg_data(seg_data),
-    .seg_data_0(seg_data_0),
-    .seg_data_1(seg_data_1),
-    .seg_data_2(seg_data_2),
-    .seg_data_3(seg_data_3),
-    .seg_data_4(seg_data_4),
-    .seg_data_5(seg_data_5),
-    .seg_data_6(seg_data_6),
-    .seg_data_7(seg_data_7)
-);*/
+    .rstp(~rst_n),
+    .timeout_in(timeout_bcd),      // исходный 1-тактовый сигнал
+    .timeout_out(timeout_long) // расширенный до 1 секунды
+);
 
 vga vga_inst(
 	.clk(video_clk),
 	.rstp(~rst_n),
+    .timeout  (timeout_long),
     .min_tens (min_tens),
     .min_ones (min_ones),
     .sec_tens (sec_tens),
@@ -173,5 +120,16 @@ vga vga_inst(
 	.rgb_g(video_g),
 	.rgb_b(video_b)
 );
+
+/*color_bar cbi(
+	.clk(video_clk),
+	.rst(~rst_n),
+	.hs(video_hs),
+	.vs(video_vs),
+	.de(video_de),
+	.rgb_r(video_r),
+	.rgb_g(video_g),
+	.rgb_b(video_b)
+);*/
 
 endmodule

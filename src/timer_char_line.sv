@@ -2,7 +2,7 @@ module timer_char_line #(
     parameter PIX_DEP = 8,
     parameter GLYPH_W = 40,
     parameter GLYPH_H = 50,
-    parameter SYM_NUM = 12,
+    parameter SYM_NUM = 15,
     
     // dont change
     parameter NUM_ADDR = GLYPH_H*SYM_NUM,  //600 //кол-во адресов

@@ -1,4 +1,4 @@
-create_clock -period 30.303 -name CLK_IN -add [get_ports clk]
+create_clock -period 25.000 -name CLK_IN -add [get_ports clk]
 
 set_property -dict {PACKAGE_PIN E3    IOSTANDARD LVCMOS33 } [get_ports { clk }];
 set_property -dict { PACKAGE_PIN J15   IOSTANDARD LVCMOS33 } [get_ports { rst_n }]; #IO_L24N_T3_RS0_15 Sch=sw[0]

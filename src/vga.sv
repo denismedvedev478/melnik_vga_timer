@@ -1,6 +1,7 @@
 module vga(
 	input                 clk,           //pixel clock
 	input                 rstp,           //reset signal high active
+	input  logic          timeout,
     input  logic [3:0]    min_tens, min_ones,
     input  logic [3:0]    sec_tens, sec_ones,
     input  logic [3:0]    ms_hund, ms_tens, ms_ones,
@@ -189,6 +190,7 @@ time2vga time2vga_inst(
     .active_y    (active_y),
     .video_active(video_active),
 
+	.timeout  (timeout),
     .min_tens (min_tens),
     .min_ones (min_ones),
     .sec_tens (sec_tens),

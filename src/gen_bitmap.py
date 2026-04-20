@@ -3,7 +3,7 @@ from functools import reduce
 
 GLYPH_W = 40
 GLYPH_H = 50
-SYMBOLS = "0123456789:."
+SYMBOLS = "0123456789:.ВСЁ"
 
 COLOR_FG = 0xFFF
 COLOR_BG = 0x000
