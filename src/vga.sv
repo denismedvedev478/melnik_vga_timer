@@ -1,9 +1,9 @@
 module vga(
 	input                 clk,           //pixel clock
 	input                 rstp,           //reset signal high active
-	input  logic [7:0]    min_dec,
-	input  logic [7:0]    sec_dec,
-	input  logic [9:0]    ms_dec,
+    output logic [3:0]    min_tens, min_ones,
+    output logic [3:0]    sec_tens, sec_ones,
+    output logic [3:0]    ms_hund, ms_tens, ms_ones,
 	output                hs,            //horizontal synchronization
 	output                vs,            //vertical synchronization
 	output                de,            //video valid
@@ -189,10 +189,14 @@ time2vga time2vga_inst(
     .active_y    (active_y),
     .video_active(video_active),
 
-    .min_dec(min_dec),
-    .sec_dec(sec_dec),
-    .ms_dec (ms_dec),
-
+    .min_tens (min_tens),
+    .min_ones (min_ones),
+    .sec_tens (sec_tens),
+    .sec_ones (sec_ones),
+    .ms_hund  (ms_hund ),
+    .ms_tens  (ms_tens),
+    .ms_ones  (ms_ones),
+	
     .r(rgb_r),
     .g(rgb_g),
     .b(rgb_b)

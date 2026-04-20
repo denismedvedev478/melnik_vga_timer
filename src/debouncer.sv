@@ -3,7 +3,7 @@ module debouncer #(
     parameter CLK_FREQ_HZ = 65000000    // 65 MHz
 )(
     input  logic clk,
-    input  logic rst,
+    input  logic rstp,
     input  logic btn_raw,
     output logic btn_clean,
     output logic btn_edge
@@ -22,8 +22,8 @@ module debouncer #(
 
     logic [CNT_WIDTH-1:0] cnt;
     logic btn_state;
-    always_ff @(posedge clk or posedge rst) begin
-        if (rst) begin
+    always_ff @(posedge clk or posedge rstp) begin
+        if (rstp) begin
             cnt        <= 0;
             btn_state  <= 1'b1;
             btn_clean  <= 1'b1;
