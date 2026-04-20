@@ -128,7 +128,7 @@ hex2dec #(
     .hex_in(sec_hex),
     .dec_out(sec_dec)
 );
-logic[9:0] ms_dec;
+logic[11:0] ms_dec;
 hex2dec #(
     .HEX_WIDTH(10),
     .DEC_DIGITS(3)
