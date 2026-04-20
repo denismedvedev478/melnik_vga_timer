@@ -1,0 +1,11 @@
+__pycache__/
+dump/
+logs/
+work/
+tb.files
+signal_trans_dump.log
+modelsim.ini
+vsim.dbg
+vsim.wlf
+transcript
+wlft*
