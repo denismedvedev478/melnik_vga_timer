@@ -14,7 +14,7 @@ debouncer #(
     .CLK_FREQ_HZ(20_000_000)
 )debouncer_key1_inst(
     .clk(clk),
-	.rst(~rst_n),
+	.rstp(~rst_n),
     .btn_raw(key1),
     .btn_edge(key1_edge)
 );
@@ -23,7 +23,7 @@ debouncer #(
     .CLK_FREQ_HZ(20_000_000)
 )debouncer_key2_inst(
     .clk(clk),
-	.rst(~rst_n),
+	.rstp(~rst_n),
     .btn_raw(key2),
     .btn_edge(key2_edge)
 );
@@ -32,7 +32,7 @@ debouncer #(
     .CLK_FREQ_HZ(20_000_000)
 )debouncer_key3_inst(
     .clk(clk),
-	.rst(~rst_n),
+	.rstp(~rst_n),
     .btn_raw(key3),
     .btn_edge(key3_edge)
 );
@@ -46,7 +46,7 @@ timer#(
     .CLK_FREQ_HZ(20_000_000)
 ) timer_inst(
     .clk(clk),
-    .rst(~rst_n),
+    .rstp(~rst_n),
     .t1ms_ext(tick_1ms),
     .key1_min (key1_edge),
     .key2_sec (key2_edge),
